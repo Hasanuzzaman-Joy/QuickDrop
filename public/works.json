@@ -1,0 +1,22 @@
+[
+  {
+    "icon": "FaCarSide",
+    "title": "Booking Pick & Drop",
+    "paragraph": "Fast and secure delivery for personal or business needs — always on time."
+  },
+  {
+    "icon": "FaMoneyBillWave",
+    "title": "Cash On Delivery",
+    "paragraph": "We deliver and collect payments, keeping your transactions hassle-free."
+  },
+  {
+    "icon": "FaWarehouse",
+    "title": "Delivery Hub",
+    "paragraph": "Smart sorting and quick dispatch from our efficient delivery centers."
+  },
+  {
+    "icon": "FaBuilding",
+    "title": "Booking SME & Corporate",
+    "paragraph": "Flexible delivery solutions crafted for businesses of all sizes."
+  }
+]
