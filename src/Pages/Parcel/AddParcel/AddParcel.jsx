@@ -4,12 +4,15 @@ import Swal from "sweetalert2";
 import Button from "../../shared/button";
 import { useLoaderData } from "react-router";
 import useAuth from "../../../Hooks/useAuth";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const AddForm = () => {
 
     const locationData = useLoaderData();
 
     const { user } = useAuth();
+
+    const axiosSecure = useAxiosSecure();
 
     const {
         register,
@@ -36,9 +39,9 @@ const AddForm = () => {
         .filter(item => item.region === receiverRegion)
         .map(item => item.district);
 
-    const trackingId = `TRK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;    
-
     const onSubmit = (data) => {
+        const trackingId = `TRK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
         if (data.type === "non-document" && !data.weight) {
             Swal.fire("Missing Field", "Parcel Weight is required for non-document type.", "error");
             return;
@@ -127,14 +130,21 @@ const AddForm = () => {
                     ...data,
                     cost: totalCost,
                     payment_status: "unpaid",
-                    delivery_status: "not dispatched",
-                    tracking_id: trackingId,            
-                    sender: user,
+                    delivery_status: "not delivered",
+                    tracking_id: trackingId,
+                    sender: user?.email,
                     creation_date: new Date().toISOString()
                 };
-                console.log("Parcel Saved ✅", finalData);
-                Swal.fire("Success", "Parcel has been saved!", "success");
-                reset();
+                // Send the data to the server
+                axiosSecure.post("/add-parcels", finalData)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            // Show the success message after saving the data
+                            Swal.fire("Success", "Parcel has been saved!", "success");
+                            reset();
+                        }
+                    })
+                    .catch(err => console.log(err));
             }
         });
     };

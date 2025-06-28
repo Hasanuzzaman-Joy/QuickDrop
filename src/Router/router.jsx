@@ -7,42 +7,64 @@ import Register from "../Pages/Auth/Register/Register";
 import Coverage from "../Pages/Coverage/Coverage/Coverage";
 import AddParcel from "../Pages/Parcel/AddParcel/AddParcel";
 import Loading from "../Pages/shared/Loading";
+import DashboardLayouts from "../Layouts/DashboardLayouts";
+import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
+import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
+import PrivateRoute from "../Routes/PrivateRoute";
 
 const router = createBrowserRouter(
     [
         {
-            path:'/',
-            element:<RootLayouts />,
-            children:[
+            path: '/',
+            element: <RootLayouts />,
+            children: [
                 {
-                    index:true,
-                    element:<Home />
+                    index: true,
+                    element: <Home />
                 },
                 {
-                    path:'coverage',
-                    element:<Coverage />,
+                    path: 'coverage',
+                    element: <Coverage />,
                     loader: () => fetch('/warehouses.json'),
-                    hydrateFallbackElement:<Loading />
+                    hydrateFallbackElement: <Loading />
                 },
                 {
-                    path:'add-parcel',
-                    element:<AddParcel />,
+                    path: 'add-parcel',
+                    element: <AddParcel />,
                     loader: () => fetch('/warehouses.json'),
-                    hydrateFallbackElement:<Loading />
+                    hydrateFallbackElement: <Loading />
                 }
             ]
         },
         {
-            path:'/',
-            element:<AuthLayouts />,
-            children:[
+            path: '/',
+            element: <AuthLayouts />,
+            children: [
                 {
-                    path:'login',
-                    element:<Login />
+                    path: 'login',
+                    element: <Login />
                 },
                 {
-                    path:'register',
-                    element:<Register />
+                    path: 'register',
+                    element: <Register />
+                }
+            ]
+        },
+        {
+            path: '/',
+            element: <DashboardLayouts />,
+            children: [
+                {
+                    path:'dashboard',
+                    element: <PrivateRoute>
+                        <Dashboard />
+                    </PrivateRoute>
+                },
+                {
+                    path:'my-parcels',
+                    element: <PrivateRoute>
+                        <MyParcels />
+                    </PrivateRoute>
                 }
             ]
         }
