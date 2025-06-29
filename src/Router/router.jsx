@@ -12,6 +12,7 @@ import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
 import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import PrivateRoute from "../Routes/PrivateRoute";
 import Payment from "../Pages/Payment/Payment";
+import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 
 const router = createBrowserRouter(
     [
@@ -73,6 +74,12 @@ const router = createBrowserRouter(
                     path:'my-parcels',
                     element: <PrivateRoute>
                         <MyParcels />
+                    </PrivateRoute>
+                },
+                {
+                    path:'payment-history',
+                    element: <PrivateRoute>
+                        <PaymentHistory />
                     </PrivateRoute>
                 }
             ]

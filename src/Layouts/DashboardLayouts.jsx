@@ -1,4 +1,4 @@
-import React from 'react';
+import { FaTachometerAlt, FaBoxOpen, FaMoneyCheckAlt } from 'react-icons/fa';
 import { Outlet, Link } from 'react-router';
 
 const DashboardLayouts = () => {
@@ -65,20 +65,34 @@ const DashboardLayouts = () => {
               <ul className="menu bg-base-200 min-h-full w-64 p-4 space-y-2">
                 <li>
                   <Link
-                    to="/dashboard/"
-                    className="font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                    to="/dashboard"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
                   >
+                    <FaTachometerAlt className="text-xl" />
                     My Dashboard
                   </Link>
                 </li>
+
                 <li>
                   <Link
-                    to="/my-parcel"
-                    className="font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                    to="/my-parcels"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
                   >
+                    <FaBoxOpen className="text-xl" />
                     My Parcels
                   </Link>
                 </li>
+
+                <li>
+                  <Link
+                    to="/payment-history"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaMoneyCheckAlt className="text-xl" />
+                    Payment History
+                  </Link>
+                </li>
+
               </ul>
             </div>
           </div>
@@ -97,20 +111,34 @@ const DashboardLayouts = () => {
           <ul className="menu bg-base-200 text-base-content min-h-full w-64 p-4 space-y-2">
             <li>
               <Link
-                to="/dashboard/"
-                className="font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                to="/dashboard"
+                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
               >
+                <FaTachometerAlt className="text-xl" />
                 My Dashboard
               </Link>
             </li>
+
             <li>
               <Link
                 to="/my-parcels"
-                className="font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
               >
+                <FaBoxOpen className="text-xl" />
                 My Parcels
               </Link>
             </li>
+
+            <li>
+              <Link
+                to="/payment-history"
+                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+              >
+                <FaMoneyCheckAlt className="text-xl" />
+                Payment History
+              </Link>
+            </li>
+
           </ul>
         </div>
       </div>
