@@ -11,6 +11,7 @@ import DashboardLayouts from "../Layouts/DashboardLayouts";
 import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
 import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import PrivateRoute from "../Routes/PrivateRoute";
+import Payment from "../Pages/Payment/Payment";
 
 const router = createBrowserRouter(
     [
@@ -35,6 +36,12 @@ const router = createBrowserRouter(
                     </PrivateRoute>,
                     loader: () => fetch('/warehouses.json'),
                     hydrateFallbackElement: <Loading />
+                },
+                {
+                    path:'payment/:id',
+                    element: <PrivateRoute>
+                        <Payment />
+                    </PrivateRoute>
                 }
             ]
         },

@@ -3,6 +3,7 @@ import useAuth from '../../../Hooks/useAuth';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import Loading from '../../shared/Loading';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router';
 
 const MyParcels = () => {
 
@@ -17,6 +18,8 @@ const MyParcels = () => {
             return res.data
         }
     })
+
+    const navigate = useNavigate();
 
     // Delete handler with SweetAlert2
     const handleDelete = (id) => {
@@ -81,13 +84,13 @@ const MyParcels = () => {
                                 </span>
                             </td>
                             <td className="px-3 py-2 space-x-1">
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                                <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs cursor-pointer">
                                     View
                                 </button>
-                                <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs">
+                                <button onClick={() => {navigate(`/payment/${parcel._id}`)}} className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs cursor-pointer">
                                     Pay
                                 </button>
-                                <button onClick={() => handleDelete(parcel._id)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+                                <button onClick={() => handleDelete(parcel._id)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs cursor-pointer">
                                     Delete
                                 </button>
                             </td>
