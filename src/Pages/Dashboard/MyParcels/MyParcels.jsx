@@ -54,11 +54,11 @@ const MyParcels = () => {
             <table className="w-full md:w-[85%] mx-auto bg-white border border-gray-200 rounded-md shadow-sm text-sm text-gray-700">
                 <thead>
                     <tr className="bg-gray-50 text-gray-600">
-                        {/* <th className="px-3 py-2 text-left">Type</th>
+                        <th className="px-3 py-2 text-left">Type</th>
                         <th className="px-3 py-2 text-left">Title</th>
                         <th className="px-3 py-2 text-left">Cost</th>
                         <th className="px-3 py-2 text-left">Payment</th>
-                        <th className="px-3 py-2 text-left">Actions</th> */}
+                        <th className="px-3 py-2 text-left">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -1,18 +1,25 @@
 import React from 'react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import logo from '../../assets/logo.png'
 import { MdArrowOutward } from "react-icons/md";
+import useAuth from "../../Hooks/useAuth";
 
 const Navbar = () => {
 
-    const navLinks = 
-    <div className="flex gap-7 font-medium text-lg">
-        <NavLink to='/'>Home</NavLink>
-        <NavLink to='/services'>Services</NavLink>
-        <NavLink to='/coverage'>Coverage</NavLink>
-        <NavLink to='/add-parcel'>Add Parcel</NavLink>
-        <NavLink to='/dashboard'>Dashboard</NavLink>
-    </div>
+    const{user, logOut} = useAuth();
+
+    const navLinks =
+        <div className="flex gap-7 font-medium text-lg">
+            <NavLink to='/'>Home</NavLink>
+            <NavLink to='/services'>Services</NavLink>
+            <NavLink to='/coverage'>Coverage</NavLink>
+            <NavLink to='/add-parcel'>Add Parcel</NavLink>
+            <NavLink to='/dashboard'>Dashboard</NavLink>
+        </div>
+
+    const handleLogOut = () =>{
+        logOut()
+    }
 
     return (
         <div className="navbar bg-base-100 shadow-sm px-5 py-3">
@@ -38,11 +45,17 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end flex gap-2">
-                <button className="btn btn-outline w-[151px] h-[40px] text-lg font-bold text-black border-base-300 rounded-3xl">Sign in</button>
-                <button className="btn btn-primary w-[126px] h-[40px] text-lg font-bold text-black border-base-300 rounded-3xl">Be a rider</button>
-                <div className="flex justify-center items-center bg-black w-[40px] h-[40px] rounded-full cursor-pointer">
-                    <MdArrowOutward className="text-primary" size={30} />
-                </div>
+                {
+                    user ?
+                        <button onClick={handleLogOut} className="btn btn-outline w-[151px] h-[40px] text-lg font-bold text-black border-base-300 rounded-3xl">Logout</button> :
+                        <>
+                            <Link to='/login' className="btn btn-outline w-[151px] h-[40px] text-lg font-bold text-black border-base-300 rounded-3xl">Sign in</Link>
+                            <Link to='/register' className="btn btn-primary w-[126px] h-[40px] text-lg font-bold text-black border-base-300 rounded-3xl">Be a rider</Link>
+                            <div className="flex justify-center items-center bg-black w-[40px] h-[40px] rounded-full cursor-pointer">
+                                <MdArrowOutward className="text-primary" size={30} />
+                            </div>
+                        </>
+                }
             </div>
         </div>
     );

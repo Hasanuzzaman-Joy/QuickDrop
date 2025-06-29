@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import useAuth from "../../../Hooks/useAuth";
 
@@ -9,11 +9,14 @@ const Login = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const{signIn} = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const onSubmit = (data) => {
         signIn(data.email, data.password)
-            .then(() => console.log("Successfully logged in"))
-            .catch(error => console.log(error))
+        .then(() => {
+            navigate(location.state || "/")
+        })
     }
 
     return (

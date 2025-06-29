@@ -30,7 +30,9 @@ const router = createBrowserRouter(
                 },
                 {
                     path: 'add-parcel',
-                    element: <AddParcel />,
+                    element: <PrivateRoute>
+                        <AddParcel />
+                    </PrivateRoute>,
                     loader: () => fetch('/warehouses.json'),
                     hydrateFallbackElement: <Loading />
                 }
