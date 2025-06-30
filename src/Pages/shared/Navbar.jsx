@@ -6,18 +6,24 @@ import useAuth from "../../Hooks/useAuth";
 
 const Navbar = () => {
 
-    const{user, logOut} = useAuth();
+    const { user, logOut } = useAuth();
 
     const navLinks =
         <div className="flex gap-7 font-medium text-lg">
             <NavLink to='/'>Home</NavLink>
             <NavLink to='/services'>Services</NavLink>
             <NavLink to='/coverage'>Coverage</NavLink>
-            <NavLink to='/add-parcel'>Add Parcel</NavLink>
-            <NavLink to='/dashboard'>Dashboard</NavLink>
+            {
+                user ?
+                    <>
+                        <NavLink to='/add-parcel'>Add Parcel</NavLink>
+                        <NavLink to='/dashboard'>Dashboard</NavLink>
+                        <NavLink to='/be-a-rider'>Be A Rider</NavLink>
+                    </> : " "
+            }
         </div>
 
-    const handleLogOut = () =>{
+    const handleLogOut = () => {
         logOut()
     }
 

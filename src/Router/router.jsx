@@ -13,6 +13,7 @@ import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import PrivateRoute from "../Routes/PrivateRoute";
 import Payment from "../Pages/Payment/Payment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
+import BeARider from "../Pages/BeARider/BeARider";
 
 const router = createBrowserRouter(
     [
@@ -39,7 +40,15 @@ const router = createBrowserRouter(
                     hydrateFallbackElement: <Loading />
                 },
                 {
-                    path:'payment/:id',
+                    path: 'be-a-rider',
+                    element: <PrivateRoute>
+                        <BeARider />
+                    </PrivateRoute>,
+                    loader: () => fetch('/warehouses.json'),
+                    hydrateFallbackElement: <Loading />
+                },
+                {
+                    path: 'payment/:id',
                     element: <PrivateRoute>
                         <Payment />
                     </PrivateRoute>
@@ -65,19 +74,19 @@ const router = createBrowserRouter(
             element: <DashboardLayouts />,
             children: [
                 {
-                    path:'dashboard',
+                    path: 'dashboard',
                     element: <PrivateRoute>
                         <Dashboard />
                     </PrivateRoute>
                 },
                 {
-                    path:'my-parcels',
+                    path: 'my-parcels',
                     element: <PrivateRoute>
                         <MyParcels />
                     </PrivateRoute>
                 },
                 {
-                    path:'payment-history',
+                    path: 'payment-history',
                     element: <PrivateRoute>
                         <PaymentHistory />
                     </PrivateRoute>
