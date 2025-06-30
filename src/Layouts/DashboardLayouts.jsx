@@ -1,4 +1,4 @@
-import { FaTachometerAlt, FaBoxOpen, FaMoneyCheckAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaBoxOpen, FaMoneyCheckAlt, FaUserClock, FaUserCheck } from "react-icons/fa";
 import { Outlet, Link } from 'react-router';
 
 const DashboardLayouts = () => {
@@ -93,6 +93,26 @@ const DashboardLayouts = () => {
                   </Link>
                 </li>
 
+                <li>
+                  <Link
+                    to="/pending-riders"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserClock className="text-xl" />
+                    Pending Riders
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/active-riders"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserCheck className="text-xl" />
+                    Active Riders
+                  </Link>
+                </li>
+
               </ul>
             </div>
           </div>
@@ -136,6 +156,26 @@ const DashboardLayouts = () => {
               >
                 <FaMoneyCheckAlt className="text-xl" />
                 Payment History
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/pending-riders"
+                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+              >
+                <FaUserClock className="text-xl" />
+                Pending Riders
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                to="/active-riders"
+                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+              >
+                <FaUserCheck className="text-xl" />
+                Active Riders
               </Link>
             </li>
 

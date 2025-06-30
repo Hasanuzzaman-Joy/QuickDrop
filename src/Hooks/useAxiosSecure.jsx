@@ -1,6 +1,6 @@
-import axios from 'axios';
-import useAuth from '../Hooks/useAuth';
-import { useEffect } from 'react';
+import axios from "axios";
+import useAuth from "../Hooks/useAuth";
+import { useEffect } from "react";
 
 const axiosSecure = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,

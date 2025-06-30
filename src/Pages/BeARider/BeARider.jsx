@@ -1,8 +1,12 @@
 import { useForm, Controller } from "react-hook-form";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const BeARider = () => {
   const regionData = useLoaderData();
+  const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const { register, handleSubmit, watch, control } = useForm();
   const selectedRegion = watch("region");
@@ -13,10 +17,29 @@ const BeARider = () => {
   // Find covered areas based on selected region
   const filteredCoveredAreas = regionData
     .filter((item) => item.region === selectedRegion)
-    .flatMap((item) => item.district);
+    .map((item) => item.district);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async(data) => {
+    try {
+      const res = await axiosSecure.post('/riders', data);
+
+      if (res.data.insertedId) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Your rider application has been submitted.',
+        });
+
+        navigate('/');
+      }
+    } 
+    catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong while submitting. Please try again.',
+      });
+    }
   };
 
   return (
@@ -67,7 +90,7 @@ const BeARider = () => {
 
             <div className="flex gap-4">
               <input
-                type="text"
+                type="number"
                 placeholder="NID"
                 {...register("nid", { required: true })}
                 className="border w-full p-2 rounded"
