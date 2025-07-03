@@ -8,7 +8,7 @@ import Features from '../Features.jsx/Features';
 const Home = () => {
     return (
         <div>
-            <Slider />
+            {/* <Slider /> */}
             <Works />
             <Services />
             <PartnerMarquee />

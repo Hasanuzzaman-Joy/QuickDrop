@@ -16,6 +16,13 @@ import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import BeARider from "../Pages/BeARider/BeARider";
 import PendingRiders from "../Pages/Riders/PendingRiders";
 import ActiveRiders from "../Pages/Riders/ActiveRiders";
+import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
+import Forbidden from "../Pages/Forbidden/Forbidden";
+import AdminPrivateRoute from "../Routes/AdminPrivateRoute";
+import AssignRider from "../Pages/Parcel/AddParcel/AssignRider/AssignRider";
+import PendingDeliveries from "../Pages/Dashboard/PendingDeliveries/PendingDeliveries"
+import RiderPrivateRoute from "../Routes/RiderPrivateRoute";
+import CompletedDeliveries from "../Pages/Dashboard/CompletedDeliveries/CompletedDeliveries";
 
 const router = createBrowserRouter(
     [
@@ -54,6 +61,10 @@ const router = createBrowserRouter(
                     element: <PrivateRoute>
                         <Payment />
                     </PrivateRoute>
+                },
+                {
+                    path: '/forbidden',
+                    element: <Forbidden />
                 }
             ]
         },
@@ -95,15 +106,39 @@ const router = createBrowserRouter(
                 },
                 {
                     path: 'active-riders',
-                    element: <PrivateRoute>
+                    element: <AdminPrivateRoute>
                         <ActiveRiders />
-                    </PrivateRoute>
+                    </AdminPrivateRoute>
                 },
                 {
                     path: 'pending-riders',
-                    element: <PrivateRoute>
+                    element: <AdminPrivateRoute>
                         <PendingRiders />
-                    </PrivateRoute>
+                    </AdminPrivateRoute>
+                },
+                {
+                    path: 'make-admin',
+                    element: <AdminPrivateRoute>
+                        <MakeAdmin />
+                    </AdminPrivateRoute>
+                },
+                {
+                    path: 'assign-rider',
+                    element: <AdminPrivateRoute>
+                        <AssignRider />
+                    </AdminPrivateRoute>
+                },
+                {
+                    path: 'pending-deliveries',
+                    element:<RiderPrivateRoute>
+                        <PendingDeliveries />
+                    </RiderPrivateRoute> 
+                },
+                {
+                    path: 'completed-deliveries',
+                    element:<RiderPrivateRoute>
+                        <CompletedDeliveries />
+                    </RiderPrivateRoute> 
                 }
             ]
         }

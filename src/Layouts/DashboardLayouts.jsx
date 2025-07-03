@@ -1,20 +1,41 @@
-import { FaTachometerAlt, FaBoxOpen, FaMoneyCheckAlt, FaUserClock, FaUserCheck } from "react-icons/fa";
-import { Outlet, Link } from 'react-router';
+import {
+  FaTachometerAlt,
+  FaBoxOpen,
+  FaMoneyCheckAlt,
+  FaUserClock,
+  FaUserCheck,
+  FaUserShield,
+  FaUserPlus,
+  FaTruck,
+  FaCheckDouble 
+} from "react-icons/fa";
+import { Outlet, Link } from "react-router";
+import useUserRole from "../Hooks/useUserRole";
 
 const DashboardLayouts = () => {
+  const { role, authLoading } = useUserRole();
+
   return (
     <>
       {/* Main Drawer Container (for large screens and toggling) */}
       <div className="drawer lg:drawer-open">
         {/* Hidden checkbox to toggle the main drawer */}
-        <input id="main-drawer-toggle" type="checkbox" className="drawer-toggle" />
+        <input
+          id="main-drawer-toggle"
+          type="checkbox"
+          className="drawer-toggle"
+        />
 
         {/* Main Content Area */}
         <div className="drawer-content flex flex-col items-center justify-center">
           {/* Nested Drawer for smaller screen sidebar toggle */}
           <div className="drawer">
             {/* Checkbox toggle for nested drawer */}
-            <input id="nested-drawer-toggle" type="checkbox" className="drawer-toggle" />
+            <input
+              id="nested-drawer-toggle"
+              type="checkbox"
+              className="drawer-toggle"
+            />
 
             {/* Navbar and Page Content */}
             <div className="drawer-content flex flex-col">
@@ -93,26 +114,58 @@ const DashboardLayouts = () => {
                   </Link>
                 </li>
 
+                {role === "admin" && !authLoading && (
+                  <>
+                    <li>
+                      <Link
+                        to="/pending-riders"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaUserClock className="text-xl" />
+                        Pending Riders
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/active-riders"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaUserCheck className="text-xl" />
+                        Active Riders
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/make-admin"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaUserShield className="text-xl" />
+                        Make Admin
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/assign-rider"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaUserPlus className="text-xl" />
+                        Assign Rider
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link
-                    to="/pending-riders"
+                    to="/pending-deliveries"
                     className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
                   >
-                    <FaUserClock className="text-xl" />
-                    Pending Riders
+                    <FaTruck className="text-xl" />
+                    Pending Deliveries
                   </Link>
                 </li>
-
-                <li>
-                  <Link
-                    to="/active-riders"
-                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
-                  >
-                    <FaUserCheck className="text-xl" />
-                    Active Riders
-                  </Link>
-                </li>
-
               </ul>
             </div>
           </div>
@@ -159,26 +212,71 @@ const DashboardLayouts = () => {
               </Link>
             </li>
 
-            <li>
-              <Link
-                to="/pending-riders"
-                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
-              >
-                <FaUserClock className="text-xl" />
-                Pending Riders
-              </Link>
-            </li>
+            {role === "admin" && !authLoading && (
+              <>
+                <li>
+                  <Link
+                    to="/pending-riders"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserClock className="text-xl" />
+                    Pending Riders
+                  </Link>
+                </li>
 
-            <li>
-              <Link
-                to="/active-riders"
-                className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
-              >
-                <FaUserCheck className="text-xl" />
-                Active Riders
-              </Link>
-            </li>
+                <li>
+                  <Link
+                    to="/active-riders"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserCheck className="text-xl" />
+                    Active Riders
+                  </Link>
+                </li>
 
+                <li>
+                  <Link
+                    to="/make-admin"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserShield className="text-xl" />
+                    Make Admin
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/assign-rider"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaUserPlus className="text-xl" />
+                    Assign Rider
+                  </Link>
+                </li>
+              </>
+            )}
+            {role === "rider" && !authLoading && (
+              <>
+
+                <li>
+                  <Link
+                    to="/pending-deliveries"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaTruck className="text-xl" />
+                    Pending Deliveries
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/completed-deliveries"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaCheckDouble className="text-xl" />
+                    Completed Deliveries
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
