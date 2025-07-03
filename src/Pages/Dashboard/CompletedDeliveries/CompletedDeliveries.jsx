@@ -1,96 +1,110 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import useAuth from "../../../Hooks/useAuth";
-import Loading from "../../shared/Loading";
 import Swal from "sweetalert2";
+import Loading from "../../shared/Loading";
 
 const CompletedDeliveries = () => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  const { data: deliveries = [], isLoading, isError } = useQuery({
+  const {
+    data: completed = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["completedDeliveries", user?.email],
-    enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/rider/completed?email=${user.email}`);
+      const res = await axiosSecure.get(`/rider/completed?email=${user?.email}`);
       return res.data;
     },
+    enabled: !!user?.email,
   });
 
-  const calculateEarning = (parcel) => {
-    const sameDistrict =
-      parcel.senderRegion === parcel.receiverRegion &&
-      parcel.senderCenter === parcel.receiverCenter;
-
-    const percentage = sameDistrict ? 0.8 : 0.3;
-    return Math.round(parcel.cost * percentage);
-  };
-
-  const handleCashOut = () => {
-    Swal.fire("Success", "Your cashout request has been submitted.", "success");
-    // 👉 You can later implement PATCH or POST to create a cashout request in DB
-  };
+  const cashoutMutation = useMutation({
+    mutationFn: async (cashOutData) => {
+      const res = await axiosSecure.post("/rider/cashOut", cashOutData);
+      return res.data;
+    },
+    onSuccess: () => {
+      Swal.fire("Success", "Cashout successful!", "success");
+      queryClient.invalidateQueries(["completedDeliveries"]);
+      queryClient.invalidateQueries(["riderEarnings"]);
+    },
+    onError: () => {
+      Swal.fire("Error", "Cashout failed", "error");
+    },
+  });
 
   if (isLoading) return <Loading />;
   if (isError)
     return (
-      <p className="text-red-600 text-center">Failed to load completed deliveries.</p>
+      <p className="text-center text-red-600">Failed to load deliveries</p>
     );
 
-  const totalEarnings = deliveries.reduce((acc, parcel) => acc + calculateEarning(parcel), 0);
-
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-x-auto">
       <h2 className="text-2xl font-semibold mb-4">Completed Deliveries</h2>
+      <table className="table w-full">
+        <thead>
+          <tr className="bg-base-200 text-left">
+            <th>#</th>
+            <th>Tracking ID</th>
+            <th>From → To</th>
+            <th>Cost</th>
+            <th>Commission</th>
+            <th>Delivered At</th>
+            <th>Cashout</th>
+          </tr>
+        </thead>
+        <tbody>
+          {completed.map((parcel, idx) => {
+            const isSameDistrict =
+              parcel.senderCenter === parcel.receiverCenter &&
+              parcel.senderRegion === parcel.receiverRegion;
+            const commission = isSameDistrict
+              ? parcel.cost * 0.8
+              : parcel.cost * 0.3;
 
-      {deliveries.length === 0 ? (
-        <p className="text-center text-gray-500">No completed deliveries yet.</p>
-      ) : (
-        <>
-          <table className="table w-full mb-4">
-            <thead className="bg-base-200 text-left">
-              <tr>
-                <th>#</th>
-                <th>Tracking ID</th>
-                <th>From → To</th>
-                <th>Cost</th>
-                <th>Your Earnings</th>
-                <th>Status</th>
+            const isCashedOut = parcel.cashOut === true;
+
+            return (
+              <tr key={parcel._id} className="hover">
+                <td>{idx + 1}</td>
+                <td>{parcel.tracking_id}</td>
+                <td>
+                  {parcel.senderCenter} → {parcel.receiverCenter}
+                </td>
+                <td>৳ {parcel.cost}</td>
+                <td>৳ {commission.toFixed(2)}</td>
+                <td>{new Date(parcel.delivered_at).toLocaleString()}</td>
+                <td>
+                  <button
+                    className={`btn btn-xs ${
+                      isCashedOut
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-600"
+                    } text-white`}
+                    disabled={isCashedOut || cashoutMutation.isLoading}
+                    onClick={() =>
+                      cashoutMutation.mutate({
+                        parcelId: parcel._id,
+                        amount: parcel.cost,
+                        riderEmail: user.email,
+                        riderName: user.displayName || "Unknown Rider",
+                        trackingId: parcel.tracking_id,
+                      })
+                    }
+                  >
+                    {isCashedOut ? "Cashed Out" : "Cashout"}
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {deliveries.map((parcel, index) => (
-                <tr key={parcel._id} className="hover">
-                  <td>{index + 1}</td>
-                  <td>{parcel.tracking_id}</td>
-                  <td>
-                    {parcel.senderCenter}, {parcel.senderRegion}
-                    <span className="font-bold mx-2">→</span>
-                    {parcel.receiverCenter}, {parcel.receiverRegion}
-                  </td>
-                  <td>৳ {parcel.cost}</td>
-                  <td>৳ {calculateEarning(parcel)}</td>
-                  <td>
-                    <span className="badge badge-success">{parcel.delivery_status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="text-right">
-            <p className="text-lg font-semibold mb-2">
-              Total Earnings: <span className="text-lime-600">৳ {totalEarnings}</span>
-            </p>
-            <button
-              onClick={handleCashOut}
-              className="btn bg-emerald-600 text-white hover:bg-emerald-700"
-            >
-              Cash Out
-            </button>
-          </div>
-        </>
-      )}
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

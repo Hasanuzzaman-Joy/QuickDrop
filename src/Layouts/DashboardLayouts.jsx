@@ -7,7 +7,7 @@ import {
   FaUserShield,
   FaUserPlus,
   FaTruck,
-  FaCheckDouble 
+  FaCheckDouble
 } from "react-icons/fa";
 import { Outlet, Link } from "react-router";
 import useUserRole from "../Hooks/useUserRole";
@@ -157,15 +157,38 @@ const DashboardLayouts = () => {
                     </li>
                   </>
                 )}
-                <li>
-                  <Link
-                    to="/pending-deliveries"
-                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
-                  >
-                    <FaTruck className="text-xl" />
-                    Pending Deliveries
-                  </Link>
-                </li>
+                {role === "rider" && !authLoading && (
+                  <>
+
+                    <li>
+                      <Link
+                        to="/pending-deliveries"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaTruck className="text-xl" />
+                        Pending Deliveries
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/completed-deliveries"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaCheckDouble className="text-xl" />
+                        Completed Deliveries
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/my-earnings"
+                        className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                      >
+                        <FaMoneyCheckAlt className="text-xl" />
+                        My Earnings
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -273,6 +296,15 @@ const DashboardLayouts = () => {
                   >
                     <FaCheckDouble className="text-xl" />
                     Completed Deliveries
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/my-earnings"
+                    className="flex items-center gap-2 font-medium hover:bg-base-300 rounded-md px-3 py-2"
+                  >
+                    <FaMoneyCheckAlt className="text-xl" />
+                    My Earnings
                   </Link>
                 </li>
               </>
