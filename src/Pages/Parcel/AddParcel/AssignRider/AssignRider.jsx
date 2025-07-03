@@ -4,12 +4,18 @@ import { FaUserPlus } from "react-icons/fa";
 import Loading from "../../../shared/Loading";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import useAuth from "../../../../Hooks/useAuth";
+import useUserRole from "../../../../Hooks/useUserRole";
 
 const AssignRider = () => {
   const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
+  const { role } = useUserRole();
+
   const [selectedParcel, setSelectedParcel] = useState(null);
   const [riders, setRiders] = useState([]);
   const [riderLoading, setRiderLoading] = useState(false);
+  const [assigning, setAssigning] = useState(false);
 
   const {
     data: parcels = [],
@@ -34,12 +40,16 @@ const AssignRider = () => {
       setRiders(res.data);
     } catch (err) {
       console.error("Failed to fetch riders:", err);
+      Swal.fire("Error", "Failed to fetch riders for this region", "error");
     } finally {
       setRiderLoading(false);
     }
   };
 
   const handleAssign = async (rider) => {
+    if (assigning) return; // prevent double clicks
+    setAssigning(true);
+
     try {
       const res = await axiosSecure.patch("/assign-rider", {
         parcelId: selectedParcel._id,
@@ -49,6 +59,14 @@ const AssignRider = () => {
       });
 
       if (res.data.modifiedCount > 0) {
+        // Save tracking log
+        await axiosSecure.post(`/tracking/${selectedParcel.tracking_id}`, {
+          stage: "rider assigned",
+          description: `Rider ${rider.name} assigned by ${user?.email}`,
+          actorEmail: user?.email,
+          actorRole: role,
+        });
+
         Swal.fire("Success", "Rider assigned successfully!", "success");
         setSelectedParcel(null);
         refetch();
@@ -58,12 +76,18 @@ const AssignRider = () => {
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to assign rider", "error");
+    } finally {
+      setAssigning(false);
     }
   };
 
   if (isLoading) return <Loading />;
   if (isError)
-    return <p className="text-center text-red-600">Failed to load data</p>;
+    return (
+      <p className="text-center text-red-600">
+        Failed to load unassigned parcels
+      </p>
+    );
 
   return (
     <div className="p-4 overflow-x-auto">
@@ -100,12 +124,24 @@ const AssignRider = () => {
               </td>
               <td>৳ {parcel.cost}</td>
               <td>
-                <span className="badge badge-warning">
+                <span
+                  className={`badge ${
+                    parcel.payment_status === "paid"
+                      ? "badge-success"
+                      : "badge-warning"
+                  }`}
+                >
                   {parcel.payment_status}
                 </span>
               </td>
               <td>
-                <span className="badge badge-error">
+                <span
+                  className={`badge ${
+                    parcel.delivery_status === "delivered"
+                      ? "badge-success"
+                      : "badge-error"
+                  }`}
+                >
                   {parcel.delivery_status}
                 </span>
               </td>
@@ -125,7 +161,7 @@ const AssignRider = () => {
       {/* Modal */}
       {selectedParcel && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-auto">
             <h3 className="text-lg font-bold mb-2">
               Available Riders in {selectedParcel.senderRegion}
             </h3>
@@ -133,7 +169,9 @@ const AssignRider = () => {
             {riderLoading ? (
               <p>Loading riders...</p>
             ) : riders.length === 0 ? (
-              <p className="text-gray-500">No riders available in this region.</p>
+              <p className="text-gray-500">
+                No riders available in this region.
+              </p>
             ) : (
               <ul className="space-y-2 max-h-60 overflow-y-auto">
                 {riders.map((rider) => (
@@ -148,6 +186,7 @@ const AssignRider = () => {
                     <button
                       onClick={() => handleAssign(rider)}
                       className="btn btn-xs bg-green-600 text-white"
+                      disabled={assigning}
                     >
                       Assign
                     </button>

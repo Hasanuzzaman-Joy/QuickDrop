@@ -25,14 +25,33 @@ const PendingDeliveries = () => {
   });
 
   const updateDeliveryMutation = useMutation({
-    mutationFn: async ({ id, status }) => {
-      const res = await axiosSecure.patch(`/rider/update-delivery/${id}`, {
-        status,
-      });
-      return res.data;
+    mutationFn: async ({ id, status, trackingId }) => {
+      // Update delivery status
+      const updateRes = await axiosSecure.patch(
+        `/rider/update-delivery/${id}`,
+        {
+          status,
+        }
+      );
+
+      if (updateRes.data.modifiedCount > 0) {
+        // Save tracking log for status update
+        await axiosSecure.post(`/tracking/${trackingId}`, {
+          stage: status,
+          description: `Delivery status changed to "${status}" by ${user.email}`,
+          actorEmail: user.email,
+          actorRole: "rider", // you can dynamically pass role if you want
+        });
+      }
+
+      return updateRes.data;
     },
     onSuccess: () => {
-      Swal.fire("Success", "Delivery status updated!", "success");
+      Swal.fire(
+        "Success",
+        "Delivery status updated and tracking logged!",
+        "success"
+      );
       refetch();
     },
     onError: () => {
@@ -40,13 +59,17 @@ const PendingDeliveries = () => {
     },
   });
 
-  const handleUpdate = (id, newStatus) => {
-    updateDeliveryMutation.mutate({ id, status: newStatus });
+  const handleUpdate = (id, newStatus, trackingId) => {
+    if (!updateDeliveryMutation.isLoading) {
+      updateDeliveryMutation.mutate({ id, status: newStatus, trackingId });
+    }
   };
 
   if (isLoading) return <Loading />;
   if (isError)
-    return <p className="text-center text-red-500">Failed to load deliveries</p>;
+    return (
+      <p className="text-center text-red-500">Failed to load deliveries</p>
+    );
 
   return (
     <div className="p-5 overflow-x-auto">
@@ -70,7 +93,9 @@ const PendingDeliveries = () => {
               <td>{parcel.tracking_id}</td>
               <td>
                 <p className="font-medium">{parcel.receiverName}</p>
-                <p className="text-xs text-gray-500">{parcel.receiverContact}</p>
+                <p className="text-xs text-gray-500">
+                  {parcel.receiverContact}
+                </p>
               </td>
               <td>
                 {parcel.receiverRegion}, {parcel.receiverCenter}
@@ -84,17 +109,27 @@ const PendingDeliveries = () => {
               <td>
                 {parcel.delivery_status === "rider assigned" ? (
                   <button
+                    disabled={updateDeliveryMutation.isLoading}
                     className="btn btn-xs bg-blue-600 text-white"
-                    onClick={() => handleUpdate(parcel._id, "in-transit")}
+                    onClick={() =>
+                      handleUpdate(parcel._id, "collected", parcel.tracking_id)
+                    }
                   >
-                    Collected
+                    {updateDeliveryMutation.isLoading
+                      ? "Updating..."
+                      : "Collect Parcel"}
                   </button>
-                ) : parcel.delivery_status === "in-transit" ? (
+                ) : parcel.delivery_status === "collected" ? (
                   <button
+                    disabled={updateDeliveryMutation.isLoading}
                     className="btn btn-xs bg-green-600 text-white"
-                    onClick={() => handleUpdate(parcel._id, "delivered")}
+                    onClick={() =>
+                      handleUpdate(parcel._id, "delivered", parcel.tracking_id)
+                    }
                   >
-                    Mark as Delivered
+                    {updateDeliveryMutation.isLoading
+                      ? "Updating..."
+                      : "Mark as Delivered"}
                   </button>
                 ) : (
                   <span className="text-gray-500 text-xs">No action</span>
